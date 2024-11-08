@@ -1,4 +1,3 @@
-// src/app.gateway.ts
 import { WebSocketGateway, WebSocketServer, SubscribeMessage, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect, MessageBody, ConnectedSocket } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { OrderService } from "../order/order.service";
@@ -17,7 +16,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   ) {}
 
   afterInit() {
-    console.log("WebSocket initialized");
+    console.log("WebSocket initialized!!!");
   }
 
   // Handle client connection
@@ -43,32 +42,25 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     console.log("Client disconnected:", client.data.user?.id || client.id);
   }
 
-  // Track order status (requires authentication)
   @SubscribeMessage("trackOrderStatus")
-  handleTrackOrderStatus(@MessageBody() data: { orderId: string }, @ConnectedSocket() client: Socket) {
+  async handleTrackOrderStatus(@MessageBody() data: { orderId: string; status: string }, @ConnectedSocket() client: Socket) {
     if (!client.data.user) {
       client.emit("error", "Authentication required for order tracking.");
       return;
     }
     const user = client.data.user;
+    const order = await this.orderService.getOrderStatus(Number(data.orderId), user.id);
+    if (!order) {
+      client.emit("error", "Order not found or access denied.");
+      return;
+    }
+
     console.log(`User ${user.id} is tracking order status for orderId: ${data.orderId}`);
+
     client.join(data.orderId);
-    // add orderStatus service in feature
-    const status = this.orderService.getOrderStatus(1);
-    client.emit("orderStatusUpdate", { orderId: data.orderId, status });
+    client.emit("orderStatusUpdate", { orderId: data.orderId, status: data.status });
   }
-
-  // Chat message (open to all users, no authentication required)
-  @SubscribeMessage("chatMessage")
-  handleChatMessage(@MessageBody() message: { text: string }, @ConnectedSocket() client: Socket) {
-    const username = client.data.user?.username || "Guest";
-    console.log(`Message from ${username}: ${message.text}`);
-    this.server.emit("chatMessage", { user: username, text: message.text });
+  emitOrderStatusUpdate(orderId: string, status: string) {
+    this.server.to(orderId).emit("orderStatusUpdate", { orderId, status });
   }
-
-  // Broadcast order status updates (helper function)
-  // sendOrderStatusUpdate(orderId: string, status: string) {
-  //   this.orderService.updateOrderStatus(1, status);
-  //   this.server.to(orderId).emit("orderStatusUpdate", { orderId, status });
-  // }
 }

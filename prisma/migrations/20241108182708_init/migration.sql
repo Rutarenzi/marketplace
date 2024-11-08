@@ -1,10 +1,3 @@
-/*
-  Warnings:
-
-  - Added the required column `categoryId` to the `Product` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `stock` to the `Product` table without a default value. This is not possible if the table is not empty.
-
-*/
 -- CreateEnum
 CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'SHIPPED', 'DELIVERED', 'CANCELED');
 
@@ -17,14 +10,6 @@ CREATE TYPE "AddressType" AS ENUM ('SHIPPING', 'BILLING');
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN', 'SELLER');
 
--- DropIndex
-DROP INDEX "Product_title_key";
-
--- AlterTable
-ALTER TABLE "Product" ADD COLUMN     "categoryId" INTEGER NOT NULL,
-ADD COLUMN     "stock" INTEGER NOT NULL,
-ALTER COLUMN "price" SET DATA TYPE DOUBLE PRECISION;
-
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
@@ -32,6 +17,7 @@ CREATE TABLE "User" (
     "password" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "role" "Role" NOT NULL DEFAULT 'USER',
+    "blocked" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -60,6 +46,21 @@ CREATE TABLE "Address" (
     "type" "AddressType" NOT NULL DEFAULT 'SHIPPING',
 
     CONSTRAINT "Address_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Product" (
+    "id" SERIAL NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT,
+    "price" DOUBLE PRECISION NOT NULL,
+    "stock" INTEGER NOT NULL,
+    "categoryId" INTEGER NOT NULL,
+    "isFeatured" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
