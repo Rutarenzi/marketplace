@@ -2,33 +2,42 @@ import { Module } from "@nestjs/common";
 import { PrismaModule } from "./prisma/prisma.module";
 import { AppGateway } from "./app/app.gateway";
 import { JwtModule } from "@nestjs/jwt";
-import { UserModule } from "./user/user.module";
-import { CategoryModule } from "./category/category.module";
-import { OrderModule } from "./order/order.module";
-import { ReviewModule } from "./review/review.module";
-import { WishlistModule } from "./wishlist/wishlist.module";
-import { CartModule } from "./cart/cart.module";
-import { PaymentModule } from "./payment/payment.module";
-import { AuthModule } from "./auth/auth.module";
-import { ProductModule } from "./product/product.module";
+import { BullModule } from "@nestjs/bull";
+import { SharedModule } from "./shared/shared.module";
+import * as dotenv from "dotenv";
+import { APP_GUARD } from "@nestjs/core";
+import { RolesGuard } from "./auth/role.guard";
+import { AuthGuard } from "./auth/auth.guard";
+
+dotenv.config();
 
 @Module({
   imports: [
     PrismaModule,
-    ProductModule,
     JwtModule.register({
-      secret: "awesomitySecret",
+      secret: process.env.JWT_SECRET || "Ruta1234",
       signOptions: { expiresIn: "1h" },
     }),
-    UserModule,
-    CategoryModule,
-    OrderModule,
-    ReviewModule,
-    WishlistModule,
-    CartModule,
-    PaymentModule,
-    AuthModule,
+    SharedModule,
+    BullModule.forRoot({
+      redis: {
+        host: `${process.env.HOST}`,
+        port: 6379,
+      },
+    }),
   ],
-  providers: [AppGateway, PrismaModule],
+  providers: [
+    AppGateway,
+    PrismaModule,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
+  exports: [AppGateway],
 })
 export class AppModule {}
