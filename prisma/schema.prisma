@@ -20,6 +20,7 @@ model User {
   wishlist    WishlistItem[]
   cartItems   CartItem[]
   role        Role          @default(USER)
+  blocked     Boolean       @default(false)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 }
