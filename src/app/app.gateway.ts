@@ -1,4 +1,3 @@
-// src/app.gateway.ts
 import { WebSocketGateway, WebSocketServer, SubscribeMessage, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect, MessageBody, ConnectedSocket } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { OrderService } from "../order/order.service";
@@ -17,7 +16,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   ) {}
 
   afterInit() {
-    console.log("WebSocket initialized");
+    console.log("WebSocket initialized!!!");
   }
 
   // Handle client connection
