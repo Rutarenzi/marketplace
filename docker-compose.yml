@@ -1,5 +1,19 @@
 version: "3.8"
+
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      DATABASE_URL: postgres://marketplace:awesomity@postgres:5432/marketplacedb
+    ports:
+      - "3000:3000"  
+    depends_on:
+      - postgres
+      - redis
+
   postgres:
     image: postgres:13.5
     restart: always

@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// 1. User Entity
 model User {
   id          Int           @id @default(autoincrement())
   email       String        @unique
@@ -24,8 +23,7 @@ model User {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 }
-
-// 2. Profile Entity
+// TO IMPROVE THIS LATER FOR MORE INFORMATION
 model Profile {
   id          Int      @id @default(autoincrement())
   bio         String?
@@ -34,7 +32,6 @@ model Profile {
   user        User     @relation(fields: [userId], references: [id])
 }
 
-// 3. Address Entity
 model Address {
   id          Int      @id @default(autoincrement())
   street      String
@@ -47,35 +44,24 @@ model Address {
   type        AddressType @default(SHIPPING)
   orders Order[]
 }
-
-// 4. Product Entity
+// TO ADD IMAGES FIELD LATER ON
 model Product {
   id          Int            @id @default(autoincrement())
   title       String
   description String?
   price       Float
   stock       Int
-  images      ProductImage[]
   categoryId  Int
   category    Category       @relation(fields: [categoryId], references: [id])
   reviews     Review[]
   orderItems  OrderItem[]
   wishlistItems WishlistItem[]
   cartItems   CartItem[] 
+  isFeatured  Boolean        @default(false)
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 }
 
-// 5. ProductImage Entity
-model ProductImage {
-  id         Int     @id @default(autoincrement())
-  url        String
-  altText    String?
-  productId  Int
-  product    Product @relation(fields: [productId], references: [id])
-}
-
-// 6. Category Entity
 model Category {
   id       Int       @id @default(autoincrement())
   name     String    @unique
@@ -85,7 +71,6 @@ model Category {
   products Product[] 
 }
 
-// 7. Order Entity
 model Order {
   id         Int             @id @default(autoincrement())
   userId     Int
@@ -98,7 +83,6 @@ model Order {
   createdAt  DateTime        @default(now())
 }
 
-// 8. OrderItem Entity
 model OrderItem {
   id        Int        @id @default(autoincrement())
   orderId   Int
@@ -109,7 +93,6 @@ model OrderItem {
   price     Float      
 }
 
-// 9. Review Entity
 model Review {
   id        Int       @id @default(autoincrement())
   rating    Int       @default(1)
@@ -121,7 +104,6 @@ model Review {
   createdAt DateTime  @default(now())
 }
 
-// 10. WishlistItem Entity
 model WishlistItem {
   id        Int      @id @default(autoincrement())
   userId    Int
@@ -131,7 +113,6 @@ model WishlistItem {
   addedAt   DateTime @default(now())
 }
 
-// 11. CartItem Entity
 model CartItem {
   id        Int      @id @default(autoincrement())
   userId    Int
@@ -141,8 +122,7 @@ model CartItem {
   product   Product  @relation(fields: [productId], references: [id])
   addedAt   DateTime @default(now())
 }
-
-// 12. Payment Entity
+// TO IMPLEMENT THIS LATER ON AND TO ADD TRANSACTION RECORD TABLE
 model Payment {
   id           Int         @id @default(autoincrement())
   amount       Float

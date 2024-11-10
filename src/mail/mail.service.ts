@@ -16,7 +16,19 @@ export class MailService {
       },
     });
   }
+  async sendOrderStatusUpdateEmail(userEmail: string, orderId: number, newStatus: string): Promise<void> {
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: userEmail,
+      subject: `Your Order #${orderId} Status Update`,
+      text: `Dear customer, your order #${orderId} has been updated to ${newStatus}.`,
+    };
 
+    await this.transporter.sendMail(mailOptions);
+  }
+  async AddStatusUpdateEmail(userEmail: string, orderId: number, status: string) {
+    await this.mailQueue.add("statusUpdate", { userEmail, orderId, status });
+  }
   async AddVerification(to: string, token: string) {
     await this.mailQueue.add("verification", { to, token });
   }
