@@ -5,20 +5,23 @@ import { JwtModule } from "@nestjs/jwt";
 import { BullModule } from "@nestjs/bull";
 import { SharedModule } from "./shared/shared.module";
 import * as dotenv from "dotenv";
+import { APP_GUARD } from "@nestjs/core";
+import { RolesGuard } from "./auth/role.guard";
+import { AuthGuard } from "./auth/auth.guard";
 
 dotenv.config();
 
 @Module({
   imports: [
+    PrismaModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || "Ruta1234",
       signOptions: { expiresIn: "1h" },
     }),
-    PrismaModule,
     SharedModule,
     BullModule.forRoot({
       redis: {
-        host: "localhost",
+        host: `${process.env.HOST}`,
         port: 6379,
       },
     }),
@@ -26,14 +29,15 @@ dotenv.config();
   providers: [
     AppGateway,
     PrismaModule,
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AuthGuard,
-    // },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: RolesGuard,
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
+  exports: [AppGateway],
 })
 export class AppModule {}

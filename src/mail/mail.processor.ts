@@ -15,4 +15,14 @@ export class MailProcessor {
       console.error("Failed to send email", error.message);
     }
   }
+
+  @Process("statusUpdate")
+  async handleStatusUpdate(job: Job<{ userEmail: string; orderId: number; status: string }>) {
+    try {
+      await this.mailService.sendOrderStatusUpdateEmail(job.data.userEmail, job.data.orderId, job.data.status);
+      console.log(`Email for update status sent to ${job.data.userEmail}`);
+    } catch (error: any) {
+      console.error("Failed to send update message due:", error.message);
+    }
+  }
 }

@@ -1,5 +1,25 @@
-version: "3.8"
+
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      DATABASE_URL: postgres://marketplace:awesomity@postgres:5432/marketplacedb
+    ports:
+      - "3400:3400"  
+      - "5555:5555"  # Port for Prisma Studio
+    depends_on:
+      - postgres
+      - redis
+    command: >
+      sh -c "
+      yarn prisma:migrate &&
+      yarn prisma:generate &&
+      yarn start:dev
+      "
+
   postgres:
     image: postgres:13.5
     restart: always
