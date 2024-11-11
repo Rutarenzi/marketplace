@@ -38,7 +38,7 @@ The **Marketplace Challenge** project is an industrial-grade API implementation 
 - DATABASE_URL=postgres://marketplace:awesomity@postgres:5432/marketplacedb
 - JWT_SECRET= your_jwt_secret
 - EMAIL_USER=your_gmail_username
-- EMAIL_PASS=your_gmail_password
+- EMAIL_PASS=your_gmail_password( this APP PASSWORD for send email with nodemailer-gmail- )
 - HOST = 'localhost'
 - PORT = 3400
 - KAFKA_BROKER=kafka:9092
