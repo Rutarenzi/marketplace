@@ -54,7 +54,7 @@ The **Marketplace Challenge** project is an industrial-grade API implementation 
 
    after building  successfully!!!! 
 
-   browser http://localhost:3400/api/docs for swagger doc 
+   browse http://localhost:3400/api/docs for swagger doc 
 
 ```
  ## Access database 
