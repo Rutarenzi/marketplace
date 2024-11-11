@@ -40,7 +40,7 @@ The **Marketplace Challenge** project is an industrial-grade API implementation 
 - EMAIL_USER=your_gmail_username
 - EMAIL_PASS=your_gmail_password( this APP PASSWORD for send email with nodemailer-gmail- )
 - HOST = 'localhost'
-- PORT = 3400
+- PORT = 3400 (if you change also change it in dockerfiles)
 - KAFKA_BROKER=kafka:9092
 
 1. **Clone the Repository**:
