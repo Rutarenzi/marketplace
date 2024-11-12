@@ -21,7 +21,7 @@ dotenv.config();
     SharedModule,
     BullModule.forRoot({
       redis: {
-        host: `${process.env.HOST}`,
+        host: "localhost",
         port: 6379,
       },
     }),
